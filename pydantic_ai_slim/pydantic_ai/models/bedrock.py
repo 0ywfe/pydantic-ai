@@ -771,6 +771,7 @@ class BedrockConverseModel(Model[BaseClient]):
                         items.append(
                             TextPart(
                                 content=cited_text,
+                                provider_name=self.system,
                                 provider_details={'citations': citations_content.get('citations', [])},
                             )
                         )
@@ -1648,7 +1649,10 @@ class BedrockStreamedResponse(StreamedResponse):
                             )
                             if cited_text:
                                 for event in self._parts_manager.handle_text_delta(
-                                    vendor_part_id=index, content=cited_text
+                                    vendor_part_id=index,
+                                    content=cited_text,
+                                    provider_name=self.provider_name,
+                                    provider_details={'citations': citation_delta.get('citations', [])},
                                 ):
                                     yield event
 
